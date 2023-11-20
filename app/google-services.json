@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "678985773250",
+    "project_id": "datacommunication-a9a6b",
+    "storage_bucket": "datacommunication-a9a6b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:678985773250:android:6c2c214ba8410b3c388b5b",
+        "android_client_info": {
+          "package_name": "com.cookandroid.datacommunication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDim46HLiWOnHq-fg-LVOOcdODvCwoSGUU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
