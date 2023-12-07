@@ -9,15 +9,24 @@
         android:id="@+id/alertedCamText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_marginTop="20sp"
+        android:layout_marginBottom="20sp"
+        android:layout_weight="0"
         android:gravity="center"
-        android:text="Alert!\nCamera : "
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:textSize="30sp" />
+
+    <ImageView
+        android:id="@+id/capturedImg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="0.9" />
 
     <Button
         android:id="@+id/offAlertBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="0.1"
         android:gravity="center"
         android:text="알람 끄기" />
 </LinearLayout>

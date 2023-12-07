@@ -90,8 +90,6 @@ public class MainActivity extends AppCompatActivity {
     }
     public void resumeMainUI(){
         toggleSwitch();
-        raisedAlert.notify();
-        raisedAlert=null;
         fragmentTransaction.remove(getSupportFragmentManager().findFragmentByTag("alertScreen"));
         fragmentDisplay.setVisibility(View.GONE);
         logicSwitch.setVisibility(View.VISIBLE);
@@ -128,7 +126,10 @@ public class MainActivity extends AppCompatActivity {
     public boolean isOn(){ return isOn; }
     public void toggleSwitch(){ isOn = !isOn(); }
     /** add는 queue에서 추출할게 없거나 기타 오류시 throw exception / offer는 null반환 */
-    public void pushAlertedCam(Camera camera){ alertedCamQueue.offer(camera); }
+    public void pushAlertedCam(Camera camera){
+        alertedCamQueue.offer(camera);
+        showAlert(alertedCamQueue.peek());
+    }
     /** remove는 queue에서 추출할게 없거나 기타 오류시 throw exception / poll은 null반환 */
     public Camera popAlertedCam(){ return alertedCamQueue.poll(); }
 }

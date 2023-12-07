@@ -5,34 +5,43 @@ import static com.cookandroid.datacommunication.MainActivity.LOG_TAG;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+
+import com.bumptech.glide.Glide;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class AlertFragment extends Fragment {
+    private final String DEFAULT_TEXT = "Alert!\nCamera : ";
     Button offAlertBtn;
     TextView alertedCamText;
     MainActivity main;
     Timer timer;
     ViewGroup viewGroup;
     TimerTask uiEffect;
-    Camera onCam;
+    Camera camera;
     DatabaseToolForRead tmpDB;
+    ImageView alerted;
+    Thread toTrackImg;
+    public static String RESULT_CONVERT;
     public AlertFragment(MainActivity main, Timer timer,Camera camera,DatabaseToolForRead tmpDB){
         this.main = main;
         this.timer = timer;
-        this.onCam = camera;
+        this.camera = camera;
         this.tmpDB = tmpDB;
     }
     @Nullable
@@ -44,14 +53,24 @@ public class AlertFragment extends Fragment {
      *              == false ~ parent 레이아웃의 레이아웃 파라미터만 받아옴
      * @param attachToRoot = 부모 ViewGroup에 프래그먼트가 바로 자식으로 들어갈지 말지를 결정
      */
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@ NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         viewGroup = (ViewGroup) inflater.inflate(R.layout.alert, container, false);
         offAlertBtn = (Button) viewGroup.findViewById(R.id.offAlertBtn);
         alertedCamText = (TextView) viewGroup.findViewById(R.id.alertedCamText);
-        //alertedCamText.append(tmpDB.);
+        alerted = (ImageView) viewGroup.findViewById(R.id.capturedImg);
+
+//        while(DatabaseToolForRead.RESULT_CONVERT==null){
+//            DatabaseToolForRead.getCaptureImageUri(camera); //현재 동기화문제로 오류, 수정요망
+//            Glide.with(this).load(DatabaseToolForRead.RESULT_CONVERT).into(alerted);
+//        }
+        DatabaseToolForRead.getCaptureImageUri(camera); //현재 동기화문제로 오류, 수정요망
+        Glide.with(this).load(RESULT_CONVERT).into(alerted);
+        //refreshImage(getActivity());
+        alertedCamText.append(DEFAULT_TEXT+camera.getCamID());
         offAlertBtn.setOnClickListener(v -> {
             main.resumeMainUI();
             uiEffect.cancel();
+            alertedCamText.setText(DEFAULT_TEXT);
             Log.d(LOG_TAG, "Timer Cancled");
         });
         doEffect();
@@ -87,5 +106,16 @@ public class AlertFragment extends Fragment {
                 }
             }
         };
+    }
+    private void refreshImage(FragmentActivity activity){
+        toTrackImg = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if(RESULT_CONVERT!=null){
+                    Glide.with(activity).load(RESULT_CONVERT).into(alerted);
+                }
+            }
+        });
+        toTrackImg.start();
     }
 }

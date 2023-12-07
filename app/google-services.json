@@ -1,13 +1,14 @@
 {
   "project_info": {
-    "project_number": "678985773250",
-    "project_id": "datacommunication-a9a6b",
-    "storage_bucket": "datacommunication-a9a6b.appspot.com"
+    "project_number": "1071811453437",
+    "firebase_url": "https://raspberrypi-20c10-default-rtdb.firebaseio.com",
+    "project_id": "raspberrypi-20c10",
+    "storage_bucket": "raspberrypi-20c10.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:678985773250:android:6c2c214ba8410b3c388b5b",
+        "mobilesdk_app_id": "1:1071811453437:android:fbaf5becf0e7584be33994",
         "android_client_info": {
           "package_name": "com.cookandroid.datacommunication"
         }
@@ -15,7 +16,26 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDim46HLiWOnHq-fg-LVOOcdODvCwoSGUU"
+          "current_key": "AIzaSyDsIDfwTttPrP6Vr9_x2_Rm7ufqsh8eubw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1071811453437:android:863ddc08a2bffecfe33994",
+        "android_client_info": {
+          "package_name": "com.cookandroid.datacommunicationkotlin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDsIDfwTttPrP6Vr9_x2_Rm7ufqsh8eubw"
         }
       ],
       "services": {
