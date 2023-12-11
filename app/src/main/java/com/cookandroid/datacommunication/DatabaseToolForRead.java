@@ -25,6 +25,7 @@ import com.google.firebase.storage.StorageReference;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,7 +35,6 @@ public class DatabaseToolForRead {
     private static final String DB_PATH = "CameraList";
     private static final String CAPTURED_PHOTO = "image";
     private static final String TEST_CASE_IMAGE = "motion.gif";
-    public static Uri RESULT;
     private final String tmpCamID = "CAM 1";
     private static DatabaseReference myDB = FirebaseDatabase.getInstance().getReference(DB_PATH);
     private Camera onCam;
@@ -66,7 +66,6 @@ public class DatabaseToolForRead {
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put(newKey,new Camera(camID, time));
         myDB.updateChildren(childUpdates);
-        RESULT = null;
     }
     /**
      * 직통으로 연결할땐 안됐는데, child 순회로는 왜 되는걸까?
@@ -88,31 +87,28 @@ public class DatabaseToolForRead {
         myDB.addValueEventListener(camStatListener);
     }
     /** Uri 값 불러오기는 성공했으나 이너 클래스 메소드 Uri를 다루는 방법을 모름. 이후 리펙토링요망 */
-    public static void getCaptureImageUri(Camera cam){
+    public static void getCaptureImageUri(Camera cam, OnUriObtainedListener listener){
         FirebaseStorage storage = FirebaseStorage.getInstance("gs://raspberrypi-20c10.appspot.com");
         StorageReference storageRef = storage.getReference();
         storageRef.child(CAPTURED_PHOTO+'/'+TEST_CASE_IMAGE).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
-                //이미지 로드 성공시
-                RESULT = uri;
-//                if(RESULT!=null){
-//                    AlertFragment.RESULT_CONVERT = RESULT.toString().substring(0,RESULT.toString().indexOf("&token"));
-//                    Log.d("myDB","result "+RESULT.toString().substring(0,RESULT.toString().indexOf("&token")));
-//                }
-
-                AlertFragment.RESULT_CONVERT = RESULT.toString().substring(0,RESULT.toString().indexOf("&token"));
-                Log.d("myDB","result "+RESULT.toString().substring(0,RESULT.toString().indexOf("&token")));
+                // 콜백을 통해 결과 전달
+                listener.onUriObtained(uri);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                //이미지 로드 실패시
-                RESULT = null;
-                Log.d("myDB","image is not exist");
+                // 콜백을 통해 실패 상황 전달
+                listener.onFailure(exception);
             }
         });
     }
     public static DatabaseReference getInstance(){ return myDB; }
     public Camera getAlertedCam(){ return onCam; }
+    // 콜백 인터페이스 정의
+    public interface OnUriObtainedListener {
+        void onUriObtained(Uri uri);
+        void onFailure(Exception exception);
+    }
 }

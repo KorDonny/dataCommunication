@@ -65,13 +65,13 @@ public class MainActivity extends AppCompatActivity {
         //프래그먼트 Transaction 획득
         //프래그먼트를 올리거나 교체하는 작업을 Transaction이라고 합니다.
         //프래그먼트를 FrameLayout의 자식으로 등록해줍니다.
-        try {
-            initDB();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
         logicSwitch.setOnClickListener(v -> {
             if(!isOn()){
+                try {
+                    initDB();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
                 toggleSwitch();
                 logicSwitch.setText("정지");
                 logicSwitch.setBackgroundColor(Color.RED);

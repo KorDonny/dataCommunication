@@ -7,6 +7,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +29,7 @@ import java.util.TimerTask;
 
 public class AlertFragment extends Fragment {
     private final String DEFAULT_TEXT = "Alert!\nCamera : ";
+    private final Handler imageHandler = new Handler(Looper.getMainLooper());
     Button offAlertBtn;
     TextView alertedCamText;
     MainActivity main;
@@ -59,13 +62,6 @@ public class AlertFragment extends Fragment {
         alertedCamText = (TextView) viewGroup.findViewById(R.id.alertedCamText);
         alerted = (ImageView) viewGroup.findViewById(R.id.capturedImg);
 
-//        while(DatabaseToolForRead.RESULT_CONVERT==null){
-//            DatabaseToolForRead.getCaptureImageUri(camera); //현재 동기화문제로 오류, 수정요망
-//            Glide.with(this).load(DatabaseToolForRead.RESULT_CONVERT).into(alerted);
-//        }
-        DatabaseToolForRead.getCaptureImageUri(camera); //현재 동기화문제로 오류, 수정요망
-        Glide.with(this).load(RESULT_CONVERT).into(alerted);
-        //refreshImage(getActivity());
         alertedCamText.append(DEFAULT_TEXT+camera.getCamID());
         offAlertBtn.setOnClickListener(v -> {
             main.resumeMainUI();
@@ -76,7 +72,38 @@ public class AlertFragment extends Fragment {
         doEffect();
         timer.scheduleAtFixedRate(uiEffect,50,600);
         Log.d(LOG_TAG, "onCreateView");
+
+        updateAlertedImage();
+
         return viewGroup;
+    }
+    // Add this method to update the image
+    private void updateAlertedImage() {
+        imageHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                // Assuming getCaptureImageUri returns the new image URL
+                DatabaseToolForRead.getCaptureImageUri(camera,
+                        new DatabaseToolForRead.OnUriObtainedListener(){
+                            @Override
+                            public void onUriObtained(Uri uri) {
+                                String result = uri.toString().substring(0,uri.toString().indexOf("&token"));
+                                Log.d("myDB","result "+result);
+
+                                // Load the new image using Glide
+                                Glide.with(getActivity()).load(result).into(alerted);
+
+                                // Update other UI elements as needed
+                                alertedCamText.append(DEFAULT_TEXT + camera.getCamID());
+                            }
+
+                            @Override
+                            public void onFailure(Exception exception) {
+                                Log.d("myDB","image is not exist");
+                            }
+                });
+            }
+        });
     }
     private void doEffect(){
         uiEffect = new TimerTask() {
@@ -106,16 +133,5 @@ public class AlertFragment extends Fragment {
                 }
             }
         };
-    }
-    private void refreshImage(FragmentActivity activity){
-        toTrackImg = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if(RESULT_CONVERT!=null){
-                    Glide.with(activity).load(RESULT_CONVERT).into(alerted);
-                }
-            }
-        });
-        toTrackImg.start();
     }
 }
